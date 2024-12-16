@@ -34,7 +34,7 @@ A Flask-based web application for real-time stock market analysis with interacti
 1. Clone the project
 
 ```bash
-git clone https://github.com/yourusername/stock-analysis-dashboard.git
+git clone https://github.com/amanjoshi2002/stock-analysis-dashboard.git
 ```
 
 2. Go to the project directory
@@ -72,7 +72,7 @@ To run this project, you will need to add the following environment variables to
 
 Clone the project
 ```bash
-git clone https://github.com/yourusername/stock-analysis-dashboard.git
+git clone https://github.com/amanjoshi2002/stock-analysis-dashboard.git
 ```
 
 Go to the project directory
@@ -87,12 +87,10 @@ pip install -r requirements.txt
 
 
 ## Start the server
-``bash
+```bash
 
 
 python app.py
 ```
 
-## API Reference
 
-#### Get stock analysis
