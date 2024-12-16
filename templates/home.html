@@ -1,0 +1,129 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Analysis Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .card-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Different colors for each risk type */
+        .credit .card-header { background-color: #4CAF50; }
+        .market .card-header { background-color: #2196F3; }
+        .liquidity .card-header { background-color: #FF9800; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Risk Analysis Dashboard</h1>
+    </header>
+
+    <div class="container">
+        <div class="cards-container">
+            <div class="card credit" onclick="navigateToRisk('credit')">
+                <div class="card-header">Credit Risk</div>
+                <div class="card-content">
+                    <div class="card-icon">💳</div>
+                    <p>Analyze and assess credit risks associated with financial instruments and counterparties.</p>
+                </div>
+            </div>
+
+            <div class="card market" onclick="window.location.href='/market'">
+                <div class="card-header">Market Risk</div>
+                <div class="card-content">
+                    <div class="card-icon">📈</div>
+                    <p>Monitor and analyze market movements and their impact on investment portfolios.</p>
+                </div>
+            </div>
+
+            <div class="card liquidity" onclick="navigateToRisk('liquidity')">
+                <div class="card-header">Liquidity Risk</div>
+                <div class="card-content">
+                    <div class="card-icon">💧</div>
+                    <p>Evaluate and track liquidity positions and potential risks in financial operations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function navigateToRisk(riskType) {
+            if (riskType === 'market') {
+                window.location.href = '/market';
+            } else {
+                alert(`${riskType.charAt(0).toUpperCase() + riskType.slice(1)} risk analysis coming soon!`);
+            }
+        }
+    </script>
+</body>
+</html>

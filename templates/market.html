@@ -1,0 +1,382 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            padding: 20px;
+            color: #1a1a1a;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #2196F3;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-container {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .search-container h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            width: 300px;
+            margin-right: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button {
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .stock-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: center;
+        }
+
+        .company-name {
+            font-size: 2.2em;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .price-badge {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.8em;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .suggestion {
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            text-align: center;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .suggestion.Invest { 
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+        .suggestion.Hold { 
+            background: linear-gradient(135deg, #FFC107, #FFA000);
+        }
+        .suggestion.Avoid { 
+            background: linear-gradient(135deg, #F44336, #D32F2F);
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .news-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .news-title {
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .news-item {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .news-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(10px);
+        }
+
+        .news-item a {
+            color: #2196F3;
+            text-decoration: none;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+
+        .news-item a:before {
+            content: '📰';
+            margin-right: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+            font-size: 1.2em;
+            color: #2196F3;
+        }
+
+        .loading:after {
+            content: '...';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80% { content: '....'; }
+            100% { content: '.....'; }
+        }
+
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+            border-left: 5px solid #c62828;
+        }
+
+        @media (max-width: 768px) {
+            .stock-info {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="companySymbol" placeholder="Enter stock symbol (e.g., TSLA)">
+            <button onclick="searchStock()">Search</button>
+        </div>
+
+        <div id="error" class="error"></div>
+        <div id="loading" class="loading">Loading...</div>
+
+        <div id="stockHeader" class="header">
+            <div class="stock-info">
+                <h1 id="companyName" class="company-name"></h1>
+                <div id="currentPrice" class="price-badge"></div>
+                <div id="suggestionBadge" class="suggestion"></div>
+            </div>
+        </div>
+
+        <div id="chartContainer" class="chart-container">
+            <canvas id="stockChart"></canvas>
+        </div>
+
+        <div id="newsContainer" class="news-container">
+            <h2 class="news-title">Latest News</h2>
+            <div id="newsList"></div>
+        </div>
+    </div>
+
+    <script>
+        let stockChart = null;
+
+        async function searchStock() {
+            const company = document.getElementById('companySymbol').value.toUpperCase();
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const stockHeader = document.getElementById('stockHeader');
+            const chartContainer = document.getElementById('chartContainer');
+            const newsContainer = document.getElementById('newsContainer');
+
+            // Reset display
+            error.style.display = 'none';
+            loading.style.display = 'block';
+            stockHeader.style.display = 'none';
+            chartContainer.style.display = 'none';
+            newsContainer.style.display = 'none';
+
+            try {
+                const response = await fetch(`/search?company=${company}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    error.textContent = data.error;
+                    error.style.display = 'block';
+                    return;
+                }
+
+                // Update header information
+                document.getElementById('companyName').textContent = data.company;
+                document.getElementById('currentPrice').textContent = `$${data.current_price.toFixed(2)}`;
+                const suggestionBadge = document.getElementById('suggestionBadge');
+                suggestionBadge.textContent = data.suggestion;
+                suggestionBadge.className = `suggestion ${data.suggestion}`;
+
+                // Update chart
+                updateChart(data.historical_data);
+
+                // Update news
+                updateNews(data.news);
+
+                // Show containers
+                stockHeader.style.display = 'block';
+                chartContainer.style.display = 'block';
+                newsContainer.style.display = 'block';
+
+            } catch (err) {
+                error.textContent = 'Error fetching stock data';
+                error.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function updateChart(historicalData) {
+            if (stockChart) {
+                stockChart.destroy();
+            }
+
+            const sortedData = historicalData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            
+            stockChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedData.map(item => item.date),
+                    datasets: [{
+                        label: 'Stock Price',
+                        data: sortedData.map(item => item.price),
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Historical Stock Price'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateNews(news) {
+            const newsList = document.getElementById('newsList');
+            newsList.innerHTML = '';
+            
+            news.forEach(article => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-item';
+                
+                const link = document.createElement('a');
+                link.href = article.url;
+                link.target = '_blank';
+                link.textContent = article.title;
+                
+                newsItem.appendChild(link);
+                newsList.appendChild(newsItem);
+            });
+        }
+    </script>
+</body>
+</html>
